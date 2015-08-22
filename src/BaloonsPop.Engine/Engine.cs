@@ -20,7 +20,7 @@
         private const string ON_EXIT_MESSAGE = "Good Bye!";
         #endregion
 
-        private string[,] highScoreChart;
+        private IHighscoreTable highScoreTable;
 
         private IUserInterface userInterface;
 
@@ -39,7 +39,7 @@
             this.create = commandFactory;
             this.game = gameModel;
             this.gameLogicProvider = gameLogicProvider;
-            this.highScoreChart = new string[2, 5];
+            this.highScoreTable = new HighscoreTable();
         }
 
         public void Run()
@@ -74,7 +74,7 @@
 
                 case TOP:
 
-                    commandList.Add(this.create.PrintHighscoreCommand(this.userInterface, this.highScoreChart));
+                    commandList.Add(this.create.PrintHighscoreCommand(this.userInterface, this.highScoreTable));
 
                     break;
 
@@ -110,9 +110,16 @@
                     {
                         commandList.Add(this.create.PrintMessageCommand(this.userInterface, string.Format(WIN_MESSAGE_TEMPLATE, game.UserMovesCount)));
 
-                        HighScoreUtility.SignIfSkilled(this.highScoreChart, this.game.UserMovesCount);
+                        if (this.highScoreTable.CanAddPlayer(this.game.UserMovesCount))
+                        {
+                            // TODO: Abstract to work with all types of UIs, not just the console?
+                            Console.WriteLine("Type in your name:");
+                            string username = Console.ReadLine();
 
-                        commandList.Add(this.create.PrintHighscoreCommand(this.userInterface, this.highScoreChart));
+                            this.highScoreTable.AddPlayer(new PlayerScore(username, this.game.UserMovesCount, new DateTime()));
+                        }
+
+                        commandList.Add(this.create.PrintHighscoreCommand(this.userInterface, this.highScoreTable));
                     }
 
                     commandList.Add(this.create.PrintFieldCommand(this.userInterface, this.game.Field));
