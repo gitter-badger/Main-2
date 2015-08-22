@@ -27,9 +27,9 @@
         {
             return new PrintMessageCommand(printer, message);
         }
-        public ICommand PrintHighscoreCommand(IPrinter printer, string[,] chart)
+        public ICommand PrintHighscoreCommand(IPrinter printer, IHighscoreTable table)
         {
-            return new PrintHighscoreCommand(printer, chart);
+            return new PrintHighscoreCommand(printer, table);
         }
 
         public ICommand PopBaloonCommand(IGameModel gameModel, IGameLogicProvider gameLogicProvider, int row, int col)
